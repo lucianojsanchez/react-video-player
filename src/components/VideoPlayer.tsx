@@ -5,17 +5,18 @@ import {
   FiStopCircle,
   FiVolume2,
   FiVolumeX,
+  FiMinimize,
+  FiMaximize,
 } from "react-icons/fi";
 import source from "../assets/src.mp4";
 
 const VideoPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.5);
-  const [isMuted, setIsMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
-  const [isDragging, setIsDragging] = useState(false); // track whether progress bar is being dragged
-  const [dragStartX, setDragStartX] = useState(0); // track starting x position of mouse pointer when dragging
 
   const videoPlayer = useRef<HTMLVideoElement>(null);
 
@@ -81,6 +82,20 @@ const VideoPlayer = () => {
     }
   };
 
+  const handleFullScreen = () => {
+    if (!isFullScreen) {
+      setIsFullScreen(true);
+      if (videoPlayer.current?.requestFullscreen) {
+        videoPlayer.current.requestFullscreen();
+      }
+    } else {
+      setIsFullScreen(false);
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col max-w-lg mx-auto">
       <video
@@ -116,6 +131,9 @@ const VideoPlayer = () => {
             value={volume}
             onChange={handleVolumeChange}
           />
+          <button onClick={handleFullScreen}>
+            {isFullScreen ? <FiMinimize /> : <FiMaximize />}
+          </button>
         </div>
         <div className="relative w-full mt-2">
           <span className="absolute left-0 ">{calculateTime(currentTime)}</span>
